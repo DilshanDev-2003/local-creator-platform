@@ -1,0 +1,23 @@
+<div class="card creator-card h-100 shadow-sm">
+  <div class="card-body text-center">
+    <% if (cr.avatar_path) { %>
+      <img src="/uploads/<%= cr.avatar_path %>" class="avatar mb-2" alt="<%= cr.name %>">
+    <% } else { %>
+      <div class="avatar avatar-fallback mx-auto mb-2" aria-hidden="true"><%= cr.name.charAt(0).toUpperCase() %></div>
+    <% } %>
+    <h3 class="h6 mb-0">
+      <a href="/creators/<%= cr.id %>" class="text-decoration-none text-dark"><%= cr.name %></a>
+    </h3>
+    <span class="badge text-bg-light"><%= cr.category_name %></span>
+    <% if (cr.location) { %><p class="text-muted small mb-1"><%= cr.location %></p><% } %>
+    <p class="mb-2">
+      <% if (cr.review_count > 0) { %>
+        <span class="star"><%= '★'.repeat(Math.round(cr.avg_rating)) %></span>
+        <small class="text-muted"><%= cr.avg_rating %> (<%= cr.review_count %>)</small>
+      <% } else { %>
+        <small class="text-muted">No reviews yet</small>
+      <% } %>
+    </p>
+    <a href="/creators/<%= cr.id %>#request" class="btn btn-primary btn-sm">Request Commission</a>
+  </div>
+</div>

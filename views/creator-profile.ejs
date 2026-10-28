@@ -1,0 +1,85 @@
+<%- include('partials/header', { title: title }) %>
+
+<!-- Profile header -->
+<section class="card shadow-sm mb-4">
+  <div class="card-body d-flex flex-column flex-md-row align-items-center gap-3">
+    <% if (creator.avatar_path) { %>
+      <img src="/uploads/<%= creator.avatar_path %>" class="avatar avatar-lg" alt="<%= creator.name %>">
+    <% } else { %>
+      <div class="avatar avatar-lg avatar-fallback" aria-hidden="true"><%= creator.name.charAt(0).toUpperCase() %></div>
+    <% } %>
+    <div class="text-center text-md-start flex-grow-1">
+      <h1 class="h3 mb-1"><%= creator.name %></h1>
+      <a href="/categories/<%= creator.category_slug %>" class="badge text-bg-light text-decoration-none"><%= creator.category_name %></a>
+      <% if (creator.location) { %><span class="text-muted small ms-2"><%= creator.location %></span><% } %>
+      <p class="mb-1 mt-1">
+        <% if (creator.review_count > 0) { %>
+          <span class="star"><%= '★'.repeat(Math.round(creator.avg_rating)) %></span>
+          <small class="text-muted"><%= creator.avg_rating %> (<%= creator.review_count %> reviews)</small>
+        <% } else { %>
+          <small class="text-muted">No reviews yet</small>
+        <% } %>
+      </p>
+      <p class="mb-0"><%= creator.bio || 'This creator has not added a bio yet.' %></p>
+    </div>
+    <a href="#request" class="btn btn-primary">Request Commission</a>
+  </div>
+</section>
+
+<!-- Portfolio -->
+<section class="mb-5">
+  <h2 class="h4 mb-3">Portfolio</h2>
+  <% if (portfolio.length === 0) { %>
+    <div class="alert alert-light border">No works uploaded yet.</div>
+  <% } else { %>
+    <div class="row g-3">
+      <% portfolio.forEach(function(p) { %>
+        <div class="col-6 col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="/uploads/<%= p.image_path %>" class="card-img-top portfolio-img" alt="<%= p.title %>">
+            <div class="card-body">
+              <h3 class="h6 mb-1"><%= p.title %></h3>
+              <% if (p.description) { %><p class="text-muted small mb-0"><%= p.description %></p><% } %>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<!-- Reviews -->
+<section class="mb-5">
+  <h2 class="h4 mb-3">Reviews</h2>
+  <% if (reviews.length === 0) { %>
+    <div class="alert alert-light border">No reviews yet. Reviews appear after a commission is completed.</div>
+  <% } else { %>
+    <% reviews.forEach(function(r) { %>
+      <div class="card mb-2">
+        <div class="card-body">
+          <span class="star"><%= '★'.repeat(r.rating) %></span>
+          <p class="mb-1"><%= r.comment || '(No written comment)' %></p>
+          <small class="text-muted">— <%= r.client_name %></small>
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
+</section>
+
+<!-- Request commission (the form itself is added in Step 6) -->
+<section id="request" class="card shadow-sm mb-4">
+  <div class="card-body">
+    <h2 class="h4">Request a commission</h2>
+    <% if (!currentUser) { %>
+      <p class="mb-2">Please log in to send a commission request to <%= creator.name %>.</p>
+      <a href="/login" class="btn btn-primary btn-sm">Log in</a>
+      <a href="/register" class="btn btn-outline-primary btn-sm">Sign up</a>
+    <% } else if (currentUser.id === creator.user_id) { %>
+      <p class="text-muted mb-0">This is your own profile, so you can't request a commission from yourself.</p>
+    <% } else { %>
+      <p class="text-muted mb-0">The request form is coming in Step 6.</p>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

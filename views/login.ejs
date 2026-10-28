@@ -1,0 +1,35 @@
+<%- include('partials/header', { title: 'Login' }) %>
+
+<section class="form-card card shadow-sm">
+  <div class="card-body p-4">
+    <h1 class="h3 mb-3">Log in</h1>
+
+    <% if (success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <% if (errors.length) { %>
+      <div class="alert alert-danger">
+        <ul class="mb-0">
+          <% errors.forEach(function(e) { %><li><%= e %></li><% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <form action="/login" method="POST">
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" value="<%= old.email || '' %>" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Log in</button>
+    </form>
+
+    <p class="text-center text-muted mt-3 mb-0">New here? <a href="/register">Create an account</a></p>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

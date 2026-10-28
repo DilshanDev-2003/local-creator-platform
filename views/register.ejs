@@ -1,0 +1,66 @@
+<%- include('partials/header', { title: 'Register' }) %>
+
+<section class="form-card card shadow-sm">
+  <div class="card-body p-4">
+    <h1 class="h3 mb-3">Create an account</h1>
+
+    <% if (errors.length) { %>
+      <div class="alert alert-danger">
+        <ul class="mb-0">
+          <% errors.forEach(function(e) { %><li><%= e %></li><% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <form action="/register" method="POST">
+      <div class="mb-3">
+        <label for="name" class="form-label">Full name</label>
+        <input type="text" class="form-control" id="name" name="name" value="<%= old.name || '' %>" required>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" value="<%= old.email || '' %>" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password (min 8 characters)</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+      </div>
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirm password</label>
+        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+      </div>
+
+      <div class="mb-3">
+        <span class="form-label d-block">I want to join as</span>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="role" id="roleVisitor" value="visitor"
+            <%= (old.role || 'visitor') === 'visitor' ? 'checked' : '' %>>
+          <label class="form-check-label" for="roleVisitor">Visitor (browse and request work)</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="role" id="roleCreator" value="creator"
+            <%= old.role === 'creator' ? 'checked' : '' %>>
+          <label class="form-check-label" for="roleCreator">Creator (showcase my work)</label>
+        </div>
+      </div>
+
+      <div id="creator-fields" class="mb-3 d-none">
+        <label for="categoryId" class="form-label">Your category</label>
+        <select class="form-select" id="categoryId" name="categoryId">
+          <option value="">-- choose --</option>
+          <% categories.forEach(function(c) { %>
+            <option value="<%= c.id %>" <%= String(old.categoryId) === String(c.id) ? 'selected' : '' %>><%= c.name %></option>
+          <% }) %>
+        </select>
+        <div class="form-text">Creator accounts appear publicly after an admin approves them.</div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Register</button>
+    </form>
+
+    <p class="text-center text-muted mt-3 mb-0">Already have an account? <a href="/login">Log in</a></p>
+  </div>
+</section>
+
+<script src="/js/register.js"></script>
+<%- include('partials/footer') %>

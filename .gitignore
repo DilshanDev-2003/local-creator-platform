@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Secrets: never commit these
+.env
+
+# User uploaded images (keep the folder, ignore the files)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/

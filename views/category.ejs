@@ -1,0 +1,24 @@
+<%- include('partials/header', { title: title }) %>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/categories">Categories</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><%= category.name %></li>
+  </ol>
+</nav>
+
+<h1 class="h3 mb-4"><%= category.name %></h1>
+
+<% if (creators.length === 0) { %>
+  <div class="alert alert-light border">No approved creators in this category yet.</div>
+<% } else { %>
+  <div class="row g-3">
+    <% creators.forEach(function(cr) { %>
+      <div class="col-12 col-md-6 col-lg-4">
+        <%- include('partials/creator-card', { cr: cr }) %>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>

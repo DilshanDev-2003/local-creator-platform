@@ -1,0 +1,140 @@
+<%- include('partials/header', { title: title }) %>
+
+<!-- HERO: carousel + search -->
+<section class="mb-5">
+  <div id="heroCarousel" class="carousel slide rounded overflow-hidden shadow-sm" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <% if (featuredWorks.length) { %>
+        <% featuredWorks.forEach(function(w, i) { %>
+          <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+            <img src="/uploads/<%= w.image_path %>" class="d-block w-100 hero-img" alt="<%= w.title %>">
+            <div class="carousel-caption bg-dark bg-opacity-50 rounded">
+              <h5><%= w.title %></h5>
+              <p class="mb-1">by <%= w.creator_name %></p>
+              <a href="/creators/<%= w.creator_id %>" class="btn btn-light btn-sm">View creator</a>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="carousel-item active">
+          <div class="hero-fallback d-flex flex-column justify-content-center align-items-center text-white text-center p-3">
+            <h1 class="display-5 fw-bold">Discover local creators</h1>
+            <p class="lead mb-0">Browse portfolios and request custom work from artists near you.</p>
+          </div>
+        </div>
+      <% } %>
+    </div>
+    <% if (featuredWorks.length > 1) { %>
+      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    <% } %>
+  </div>
+
+  <form action="/creators" method="GET" class="card card-body shadow-sm mt-3">
+    <div class="row g-2">
+      <div class="col-12 col-md-4">
+        <label for="searchCategory" class="visually-hidden">Category</label>
+        <select id="searchCategory" name="category" class="form-select">
+          <option value="">All categories</option>
+          <% categories.forEach(function(c) { %>
+            <option value="<%= c.slug %>"><%= c.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="col-12 col-md-5">
+        <label for="searchLocation" class="visually-hidden">Location</label>
+        <input type="text" id="searchLocation" name="location" class="form-control" placeholder="Location (e.g. Kurunegala)">
+      </div>
+      <div class="col-12 col-md-3">
+        <button type="submit" class="btn btn-primary w-100">Search creators</button>
+      </div>
+    </div>
+  </form>
+</section>
+
+<!-- CATEGORIES -->
+<section class="mb-5">
+  <h2 class="h4 mb-3">Browse by category</h2>
+  <div class="row g-3">
+    <% categories.forEach(function(c) { %>
+      <div class="col-6 col-md-3">
+        <a href="/categories/<%= c.slug %>" class="text-decoration-none">
+          <div class="card category-card h-100 text-center">
+            <div class="card-body">
+              <h3 class="h6 text-dark mb-1"><%= c.name %></h3>
+              <p class="text-muted small mb-0"><%= c.creator_count %> creator<%= c.creator_count == 1 ? '' : 's' %></p>
+            </div>
+          </div>
+        </a>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="mb-5 text-center">
+  <h2 class="h4 mb-4">How it works</h2>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="step-number">1</div>
+      <h3 class="h6">Browse</h3>
+      <p class="text-muted small">Explore portfolios by category and location.</p>
+    </div>
+    <div class="col-md-4">
+      <div class="step-number">2</div>
+      <h3 class="h6">Request</h3>
+      <p class="text-muted small">Send a custom commission request with your budget and deadline.</p>
+    </div>
+    <div class="col-md-4">
+      <div class="step-number">3</div>
+      <h3 class="h6">Receive</h3>
+      <p class="text-muted small">The creator accepts, delivers, and you leave a review.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED CREATORS -->
+<section class="mb-5">
+  <h2 class="h4 mb-3">Featured creators</h2>
+  <% if (creators.length === 0) { %>
+    <div class="alert alert-light border">No approved creators yet. Check back soon!</div>
+  <% } else { %>
+    <div class="row g-3">
+      <% creators.forEach(function(cr) { %>
+        <div class="col-12 col-md-6 col-lg-4">
+          <%- include('partials/creator-card', { cr: cr }) %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<!-- REVIEWS -->
+<section class="mb-4">
+  <h2 class="h4 mb-3">What clients say</h2>
+  <% if (reviews.length === 0) { %>
+    <div class="alert alert-light border">No reviews yet. Reviews appear after a commission is completed.</div>
+  <% } else { %>
+    <div class="row g-3">
+      <% reviews.forEach(function(r) { %>
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <p class="star mb-1"><%= '★'.repeat(r.rating) %></p>
+              <p class="mb-2"><%= r.comment || '(No written comment)' %></p>
+              <p class="text-muted small mb-0">— <%= r.client_name %>, on work by <%= r.creator_name %></p>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>
