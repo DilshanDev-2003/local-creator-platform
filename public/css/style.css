@@ -50,3 +50,4 @@ body { background: #f8f9fb; }
 
 .avatar-lg { width: 110px; height: 110px; font-size: 2.6rem; }
 .portfolio-img { height: 200px; object-fit: cover; }
+.thumb-img { height: 120px; object-fit: cover; }

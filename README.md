@@ -1,5 +1,7 @@
 # Local Creator Showcase & Commission Platform
 
+![CI](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/ci.yml/badge.svg)
+
 A web platform where local artists, photographers and craftspeople showcase
 their portfolios and visitors can request custom work (commissions).
 
@@ -35,6 +37,14 @@ University project, Topic 9.
    npm run dev
 ```
 6. Open http://localhost:3000
+
+## Running tests
+
+```bash
+npm test
+```
+Tests use Jest and Supertest with mocked repositories (no database needed).
+Continuous integration runs the tests on every push via GitHub Actions.
 
 ## Project Structure
 

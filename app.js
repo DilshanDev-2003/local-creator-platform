@@ -31,6 +31,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/public'));
+app.use('/creator', require('./routes/creator'));
 
 // Any URL not matched above lands here (must stay AFTER all routes)
 app.use((req, res) => {

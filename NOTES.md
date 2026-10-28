@@ -34,6 +34,19 @@ Decision log. Each entry explains WHY a choice was made (useful for the viva).
 - **findById returns null for unapproved/blocked creators**: profile URLs cannot be guessed.
 - **Real 404 page + id validation (parseInt)**: bad URLs never reach the database.
 - **Reusable creator-card partial**: one template for home, directory and category pages.
+- **Jest + Supertest instead of pytest**: pytest is Python-only; Jest is the standard
+  for Node. Repositories are mocked so tests need no database and run in CI.
+- **app.js / server.js split**: app.js exports the app; server.js starts listening.
+  Needed so tests can import the app without opening a port.
+- **GitHub Actions**: runs `npm ci` and `npm test` on every push and pull request.
+- **Uploads: random file names, extension from a server-side map, 2 MB limit, magic-byte
+  check**: the browser's Content-Type and file name can be faked, so file contents are verified.
+- **Failed requests delete their uploaded files**: no orphan images.
+- **Ownership check inside the SQL (AND creator_id = ?)** and creator id taken from the
+  session: a creator cannot touch another creator's work even by editing the form.
+- **router.use(requireRole('creator'))**: one line protects the whole creator router.
+- **Max 20 works per creator**: bounds storage.
+- **Known limitation**: images are stored on local disk (not cloud storage); fine for this project.
 
 ## Scope
 
@@ -46,7 +59,8 @@ Decision log. Each entry explains WHY a choice was made (useful for the viva).
 - [x] Register / Login
 - [x] Navbar + Homepage + Categories page
 - [x] Creator directory, profile page, category pages
-- [ ] Creator dashboard + portfolio upload
+- [x] Tests (Jest + Supertest) and CI (GitHub Actions)
+- [x] Creator dashboard + portfolio upload (with tests)
 - [ ] Commission requests
 - [ ] Reviews
 - [ ] Admin dashboard

@@ -1,0 +1,120 @@
+<%- include('partials/header', { title: title }) %>
+
+<h1 class="h3 mb-3">Creator dashboard</h1>
+
+<% if (profile.is_approved) { %>
+  <div class="alert alert-success py-2">Your profile is <strong>approved</strong> and visible to everyone.</div>
+<% } else { %>
+  <div class="alert alert-warning py-2">Your profile is <strong>awaiting admin approval</strong>. It is not public yet.</div>
+<% } %>
+
+<% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+<% if (errors.length) { %>
+  <div class="alert alert-danger">
+    <ul class="mb-0"><% errors.forEach(function(e) { %><li><%= e %></li><% }) %></ul>
+  </div>
+<% } %>
+
+<div class="row g-4">
+  <!-- Profile -->
+  <div class="col-lg-5">
+    <section class="card shadow-sm h-100">
+      <div class="card-body">
+        <h2 class="h5">Your profile</h2>
+        <p class="text-muted small">Category: <%= profile.category_name %></p>
+        <form action="/creator/profile" method="POST" enctype="multipart/form-data">
+          <div class="mb-3 text-center">
+            <% if (profile.avatar_path) { %>
+              <img src="/uploads/<%= profile.avatar_path %>" class="avatar avatar-lg" alt="Your avatar">
+            <% } else { %>
+              <div class="avatar avatar-lg avatar-fallback mx-auto" aria-hidden="true"><%= currentUser.name.charAt(0).toUpperCase() %></div>
+            <% } %>
+          </div>
+          <div class="mb-3">
+            <label for="avatar" class="form-label">Avatar (JPG, PNG or WEBP, max 2 MB)</label>
+            <input type="file" class="form-control" id="avatar" name="avatar" accept="image/jpeg,image/png,image/webp">
+          </div>
+          <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location" name="location" maxlength="100"
+                   value="<%= profile.location || '' %>" placeholder="e.g. Kurunegala">
+          </div>
+          <div class="mb-3">
+            <label for="bio" class="form-label">Bio</label>
+            <textarea class="form-control" id="bio" name="bio" rows="4" maxlength="1000"><%= profile.bio || '' %></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Save profile</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <!-- Add work -->
+  <div class="col-lg-7">
+    <section class="card shadow-sm h-100">
+      <div class="card-body">
+        <h2 class="h5">Add a work <small class="text-muted">(<%= portfolio.length %>/<%= maxWorks %>)</small></h2>
+        <form action="/creator/portfolio" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" maxlength="150" required>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description (optional)</label>
+            <textarea class="form-control" id="description" name="description" rows="2" maxlength="1000"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="image" class="form-label">Image (JPG, PNG or WEBP, max 2 MB)</label>
+            <input type="file" class="form-control" id="image" name="image" accept="image/jpeg,image/png,image/webp" required>
+          </div>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured">
+            <label class="form-check-label" for="is_featured">Show on the homepage carousel</label>
+          </div>
+          <button type="submit" class="btn btn-primary">Upload work</button>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Portfolio -->
+<section class="mt-4">
+  <h2 class="h5 mb-3">Your portfolio</h2>
+  <% if (portfolio.length === 0) { %>
+    <div class="alert alert-light border">No works yet. Upload your first one above.</div>
+  <% } else { %>
+    <div class="row g-3">
+      <% portfolio.forEach(function(p) { %>
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="card h-100 shadow-sm">
+            <img src="/uploads/<%= p.image_path %>" class="card-img-top thumb-img" alt="<%= p.title %>">
+            <div class="card-body p-2">
+              <p class="fw-semibold small mb-1"><%= p.title %></p>
+              <% if (p.is_featured) { %><span class="badge text-bg-primary mb-1">Featured</span><% } %>
+              <div class="d-flex gap-1">
+                <form action="/creator/portfolio/<%= p.id %>/feature" method="POST" class="m-0">
+                  <button type="submit" class="btn btn-outline-primary btn-sm"><%= p.is_featured ? 'Unfeature' : 'Feature' %></button>
+                </form>
+                <form action="/creator/portfolio/<%= p.id %>/delete" method="POST" class="m-0"
+                      onsubmit="return confirm('Delete this work?');">
+                  <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<!-- Incoming requests: built in Step 6 -->
+<section class="card shadow-sm mt-4">
+  <div class="card-body">
+    <h2 class="h5">Incoming commission requests</h2>
+    <p class="text-muted mb-0">Coming in Step 6.</p>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

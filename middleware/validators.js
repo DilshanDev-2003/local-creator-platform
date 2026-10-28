@@ -31,4 +31,14 @@ const loginRules = [
   body('password').notEmpty().withMessage('Enter your password.'),
 ];
 
-module.exports = { registerRules, loginRules };
+const profileRules = [
+  body('bio').trim().isLength({ max: 1000 }).withMessage('Bio must be 1000 characters or less.'),
+  body('location').trim().isLength({ max: 100 }).withMessage('Location must be 100 characters or less.'),
+];
+
+const portfolioRules = [
+  body('title').trim().isLength({ min: 2, max: 150 }).withMessage('Title must be 2-150 characters.'),
+  body('description').trim().isLength({ max: 1000 }).withMessage('Description must be 1000 characters or less.'),
+];
+
+module.exports = { registerRules, loginRules, profileRules, portfolioRules };

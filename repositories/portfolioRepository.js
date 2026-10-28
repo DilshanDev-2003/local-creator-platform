@@ -27,4 +27,42 @@ async function findByCreator(creatorId) {
   return rows;
 }
 
-module.exports = { findFeatured, findByCreator };
+async function countByCreator(creatorId) {
+  const [rows] = await pool.query(
+    'SELECT COUNT(*) AS total FROM portfolio_items WHERE creator_id = ?',
+    [creatorId]
+  );
+  return rows[0].total;
+}
+
+async function create({ creatorId, title, description, imagePath, isFeatured }) {
+  const [result] = await pool.query(
+    `INSERT INTO portfolio_items (creator_id, title, description, image_path, is_featured)
+     VALUES (?, ?, ?, ?, ?)`,
+    [creatorId, title, description || null, imagePath, isFeatured ? 1 : 0]
+  );
+  return result.insertId;
+}
+
+// Deletes ONLY if the item belongs to this creator. Returns the image file name
+// (so the file can be removed too), or null if nothing matched.
+async function deleteOwned(id, creatorId) {
+  const [rows] = await pool.query(
+    'SELECT image_path FROM portfolio_items WHERE id = ? AND creator_id = ?',
+    [id, creatorId]
+  );
+  if (!rows[0]) return null;
+  await pool.query('DELETE FROM portfolio_items WHERE id = ? AND creator_id = ?', [id, creatorId]);
+  return rows[0].image_path;
+}
+
+// Flips is_featured, again ONLY for the owner's item
+async function toggleFeatured(id, creatorId) {
+  const [result] = await pool.query(
+    'UPDATE portfolio_items SET is_featured = 1 - is_featured WHERE id = ? AND creator_id = ?',
+    [id, creatorId]
+  );
+  return result.affectedRows > 0;
+}
+
+module.exports = { findFeatured, findByCreator, countByCreator, create, deleteOwned, toggleFeatured };

@@ -60,4 +60,27 @@ async function findById(id) {
   return rows[0] || null;
 }
 
-module.exports = { search, findTopRated, findById };
+// The logged-in creator's own profile (approved or not)
+async function findByUserId(userId) {
+  const [rows] = await pool.query(
+    `SELECT cp.id, cp.user_id, cp.bio, cp.location, cp.avatar_path, cp.is_approved,
+            c.name AS category_name
+     FROM creator_profiles cp
+     JOIN categories c ON c.id = cp.category_id
+     WHERE cp.user_id = ?`,
+    [userId]
+  );
+  return rows[0] || null;
+}
+
+// avatarPath = null keeps the existing avatar (COALESCE)
+async function updateProfile(userId, { bio, location, avatarPath }) {
+  await pool.query(
+    `UPDATE creator_profiles
+     SET bio = ?, location = ?, avatar_path = COALESCE(?, avatar_path)
+     WHERE user_id = ?`,
+    [bio || null, location || null, avatarPath || null, userId]
+  );
+}
+
+module.exports = { search, findTopRated, findById, findByUserId, updateProfile };
