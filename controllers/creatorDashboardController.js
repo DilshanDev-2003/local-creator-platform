@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const creatorRepository = require('../repositories/creatorRepository');
 const portfolioRepository = require('../repositories/portfolioRepository');
 const { removeFile } = require('../middleware/upload');
+const commissionRepository = require('../repositories/commissionRepository');
 
 const MAX_WORKS = 20;
 
@@ -11,22 +12,34 @@ const MESSAGES = {
   added: 'Work added to your portfolio.',
   deleted: 'Work deleted.',
   featured: 'Featured setting updated.',
+  updated: 'Request updated.',
+};
+
+const WARNINGS = {
+  unchanged: 'That request was not found or can no longer be changed.',
 };
 
 async function renderDashboard(req, res, { errors = [], status = 200 } = {}) {
   const profile = await creatorRepository.findByUserId(req.session.user.id);
   if (!profile) return res.status(403).send('403 - No creator profile found for this account.');
 
-  const portfolio = await portfolioRepository.findByCreator(profile.id);
+  const [portfolio, requests] = await Promise.all([
+    portfolioRepository.findByCreator(profile.id),
+    commissionRepository.findByCreator(profile.id),
+  ]);
+
   const key = typeof req.query.status === 'string' ? req.query.status : '';
   const success = Object.hasOwn(MESSAGES, key) ? MESSAGES[key] : null;
+  const warning = Object.hasOwn(WARNINGS, key) ? WARNINGS[key] : null;
 
   res.status(status).render('creator-dashboard', {
     title: 'Creator dashboard',
     profile,
     portfolio,
+    requests,
     errors,
     success,
+    warning,
     maxWorks: MAX_WORKS,
   });
 }

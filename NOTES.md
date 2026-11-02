@@ -47,6 +47,17 @@ Decision log. Each entry explains WHY a choice was made (useful for the viva).
 - **router.use(requireRole('creator'))**: one line protects the whole creator router.
 - **Max 20 works per creator**: bounds storage.
 - **Known limitation**: images are stored on local disk (not cloud storage); fine for this project.
+- **Status changes are one atomic UPDATE with "AND status = <required current status>"**:
+  invalid transitions match 0 rows; no race conditions between check and update.
+- **Allowed transitions**: pending -> accepted/rejected, accepted -> completed.
+- **Contact email returned via SQL CASE only for accepted/completed requests**: privacy
+  enforced in the data layer, not only in the view.
+- **Client id from session, never from the form**; creator must exist, be approved,
+  and not be the client (no self-requests).
+- **One pending request per client per creator**: prevents spam.
+- **Visitors and creators can be clients; admins cannot.**
+- **Same response for "not yours" and "not allowed" status changes**: no information leak.
+- **Budget stored as DECIMAL, shown as LKR**; dates formatted in SQL to avoid time-zone shifts.
 
 ## Scope
 
@@ -61,7 +72,7 @@ Decision log. Each entry explains WHY a choice was made (useful for the viva).
 - [x] Creator directory, profile page, category pages
 - [x] Tests (Jest + Supertest) and CI (GitHub Actions)
 - [x] Creator dashboard + portfolio upload (with tests)
-- [ ] Commission requests
+- [x] Commission requests (client + creator flow, with tests)
 - [ ] Reviews
 - [ ] Admin dashboard
 - [ ] Final testing + viva preparation

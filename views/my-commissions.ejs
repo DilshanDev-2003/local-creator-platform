@@ -1,0 +1,36 @@
+<%- include('partials/header', { title: title }) %>
+
+<h1 class="h3 mb-3">My commissions</h1>
+
+<% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+
+<% if (requests.length === 0) { %>
+  <div class="alert alert-light border">
+    You haven't sent any requests yet. <a href="/creators">Browse creators</a> to get started.
+  </div>
+<% } else { %>
+  <% requests.forEach(function(r) { %>
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between flex-wrap gap-2">
+          <h2 class="h6 mb-0"><%= r.title %></h2>
+          <%- include('partials/status-badge', { s: r.status }) %>
+        </div>
+        <p class="small text-muted mb-1">
+          To <a href="/creators/<%= r.creator_profile_id %>"><%= r.creator_name %></a>
+          · sent <%= r.created_date %>
+          · Budget: <%= r.budget !== null ? 'LKR ' + Number(r.budget).toLocaleString('en-US') : 'not specified' %>
+          · Deadline: <%= r.deadline || 'none' %>
+        </p>
+        <p class="mb-2 pre-line"><%= r.description %></p>
+        <% if (r.contact_email) { %>
+          <p class="small mb-0">Creator contact: <a href="mailto:<%= r.contact_email %>"><%= r.contact_email %></a></p>
+        <% } else if (r.status === 'pending') { %>
+          <p class="small text-muted mb-0">Waiting for the creator to reply.</p>
+        <% } %>
+      </div>
+    </div>
+  <% }) %>
+<% } %>
+
+<%- include('partials/footer') %>

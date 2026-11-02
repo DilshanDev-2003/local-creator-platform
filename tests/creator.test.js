@@ -9,11 +9,13 @@ jest.mock('../repositories/categoryRepository');
 jest.mock('../repositories/creatorRepository');
 jest.mock('../repositories/portfolioRepository');
 jest.mock('../repositories/reviewRepository');
+jest.mock('../repositories/commissionRepository');
 
 const userRepository = require('../repositories/userRepository');
 const creatorRepository = require('../repositories/creatorRepository');
 const portfolioRepository = require('../repositories/portfolioRepository');
 const app = require('../app');
+const commissionRepository = require('../repositories/commissionRepository');
 
 const UPLOAD_DIR = path.join(__dirname, '..', 'public', 'uploads');
 const hash = bcrypt.hashSync('Correct123', 4);
@@ -42,6 +44,7 @@ beforeEach(() => {
   creatorRepository.findByUserId.mockResolvedValue(profile);
   portfolioRepository.findByCreator.mockResolvedValue([]);
   portfolioRepository.countByCreator.mockResolvedValue(0);
+  commissionRepository.findByCreator.mockResolvedValue([]);
 });
 
 afterEach(() => {

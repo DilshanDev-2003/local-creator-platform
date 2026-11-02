@@ -9,6 +9,7 @@
 <% } %>
 
 <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+<% if (warning) { %><div class="alert alert-warning"><%= warning %></div><% } %>
 <% if (errors.length) { %>
   <div class="alert alert-danger">
     <ul class="mb-0"><% errors.forEach(function(e) { %><li><%= e %></li><% }) %></ul>
@@ -109,11 +110,51 @@
   <% } %>
 </section>
 
-<!-- Incoming requests: built in Step 6 -->
+<!-- Incoming requests -->
 <section class="card shadow-sm mt-4">
   <div class="card-body">
-    <h2 class="h5">Incoming commission requests</h2>
-    <p class="text-muted mb-0">Coming in Step 6.</p>
+    <h2 class="h5">Incoming commission requests
+      <span class="badge text-bg-secondary"><%= requests.length %></span>
+    </h2>
+
+    <% if (requests.length === 0) { %>
+      <p class="text-muted mb-0">No requests yet. They will appear here once clients contact you.</p>
+    <% } else { %>
+      <% requests.forEach(function(r) { %>
+        <div class="border rounded p-3 mb-2">
+          <div class="d-flex justify-content-between flex-wrap gap-2">
+            <h3 class="h6 mb-0"><%= r.title %></h3>
+            <%- include('partials/status-badge', { s: r.status }) %>
+          </div>
+          <p class="small text-muted mb-1">
+            From <%= r.client_name %> · <%= r.created_date %>
+            · Budget: <%= r.budget !== null ? 'LKR ' + Number(r.budget).toLocaleString('en-US') : 'not specified' %>
+            · Deadline: <%= r.deadline || 'none' %>
+          </p>
+          <p class="mb-2 pre-line"><%= r.description %></p>
+          <% if (r.contact_email) { %>
+            <p class="small mb-2">Client contact: <a href="mailto:<%= r.contact_email %>"><%= r.contact_email %></a></p>
+          <% } %>
+
+          <% if (r.status === 'pending') { %>
+            <form action="/creator/commissions/<%= r.id %>/status" method="POST" class="d-inline">
+              <input type="hidden" name="status" value="accepted">
+              <button type="submit" class="btn btn-success btn-sm">Accept</button>
+            </form>
+            <form action="/creator/commissions/<%= r.id %>/status" method="POST" class="d-inline"
+                  onsubmit="return confirm('Reject this request?');">
+              <input type="hidden" name="status" value="rejected">
+              <button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+            </form>
+          <% } else if (r.status === 'accepted') { %>
+            <form action="/creator/commissions/<%= r.id %>/status" method="POST" class="d-inline">
+              <input type="hidden" name="status" value="completed">
+              <button type="submit" class="btn btn-primary btn-sm">Mark as completed</button>
+            </form>
+          <% } %>
+        </div>
+      <% }) %>
+    <% } %>
   </div>
 </section>
 

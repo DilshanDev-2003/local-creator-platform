@@ -1,4 +1,5 @@
 const { body } = require('express-validator');
+const { todayString } = require('../utils/date');
 
 const registerRules = [
   body('name')
@@ -41,4 +42,23 @@ const portfolioRules = [
   body('description').trim().isLength({ max: 1000 }).withMessage('Description must be 1000 characters or less.'),
 ];
 
-module.exports = { registerRules, loginRules, profileRules, portfolioRules };
+const commissionRules = [
+  body('title').trim().isLength({ min: 3, max: 150 }).withMessage('Title must be 3-150 characters.'),
+  body('description')
+    .trim()
+    .isLength({ min: 10, max: 2000 })
+    .withMessage('Description must be 10-2000 characters.'),
+  body('budget')
+    .optional({ values: 'falsy' })
+    .isFloat({ min: 0, max: 1000000 })
+    .withMessage('Budget must be a number between 0 and 1,000,000.'),
+  body('deadline')
+    .optional({ values: 'falsy' })
+    .isDate({ format: 'YYYY-MM-DD', strictMode: true })
+    .withMessage('Enter a valid deadline date.')
+    .bail()
+    .custom((value) => value >= todayString())
+    .withMessage('Deadline cannot be in the past.'),
+];
+
+module.exports = { registerRules, loginRules, profileRules, portfolioRules, commissionRules };
