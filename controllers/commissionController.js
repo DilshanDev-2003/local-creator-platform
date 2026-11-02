@@ -3,7 +3,17 @@ const commissionRepository = require('../repositories/commissionRepository');
 const creatorRepository = require('../repositories/creatorRepository');
 const { renderProfile } = require('./creatorController');
 
-const MESSAGES = { sent: 'Your commission request has been sent.' };
+const MESSAGES = {
+  sent: 'Your commission request has been sent.',
+  reviewed: 'Thank you! Your review has been saved.',
+};
+
+const WARNINGS = {
+  invalid_review: 'Please choose a rating from 1 to 5 (comment up to 1000 characters).',
+  not_allowed: 'That commission cannot be reviewed.',
+  already_reviewed: 'You have already reviewed this commission.',
+};
+
 const ALLOWED_STATUSES = ['accepted', 'rejected', 'completed'];
 
 function parseId(value) {
@@ -55,13 +65,13 @@ async function create(req, res) {
   }
 }
 
-// GET /my-commissions
 async function listMine(req, res) {
   try {
     const requests = await commissionRepository.findByClient(req.session.user.id);
     const key = typeof req.query.status === 'string' ? req.query.status : '';
     const success = Object.hasOwn(MESSAGES, key) ? MESSAGES[key] : null;
-    res.render('my-commissions', { title: 'My commissions', requests, success });
+    const warning = Object.hasOwn(WARNINGS, key) ? WARNINGS[key] : null;
+    res.render('my-commissions', { title: 'My commissions', requests, success, warning });
   } catch (err) {
     console.error(err);
     res.status(500).send('Something went wrong loading your requests.');

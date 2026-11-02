@@ -32,4 +32,19 @@ async function findByCreator(creatorId) {
   return rows;
 }
 
-module.exports = { findLatestVisible, findByCreator };
+// Inserts the review ONLY IF the commission belongs to this client and is completed.
+// One atomic statement: the checks and the insert cannot be separated by a race.
+// Returns true if saved, false if not allowed. A second review for the same
+// commission fails on the UNIQUE(commission_id) key (ER_DUP_ENTRY).
+async function create({ commissionId, clientId, rating, comment }) {
+  const [result] = await pool.query(
+    `INSERT INTO reviews (commission_id, rating, comment)
+     SELECT cr.id, ?, ?
+     FROM commission_requests cr
+     WHERE cr.id = ? AND cr.client_id = ? AND cr.status = 'completed'`,
+    [rating, comment, commissionId, clientId]
+  );
+  return result.affectedRows > 0;
+}
+
+module.exports = { findLatestVisible, findByCreator, create };

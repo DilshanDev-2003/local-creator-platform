@@ -61,4 +61,10 @@ const commissionRules = [
     .withMessage('Deadline cannot be in the past.'),
 ];
 
-module.exports = { registerRules, loginRules, profileRules, portfolioRules, commissionRules };
+const reviewRules = [
+  body('commissionId').isInt({ min: 1 }).withMessage('Invalid commission.'),
+  body('rating').isInt({ min: 1, max: 5 }).withMessage('Rating must be from 1 to 5.'),
+  body('comment').trim().isLength({ max: 1000 }).withMessage('Comment must be 1000 characters or less.'),
+];
+
+module.exports = { registerRules, loginRules, profileRules, portfolioRules, commissionRules, reviewRules, };

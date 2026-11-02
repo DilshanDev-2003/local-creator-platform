@@ -3,6 +3,7 @@
 <h1 class="h3 mb-3">My commissions</h1>
 
 <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+<% if (warning) { %><div class="alert alert-warning"><%= warning %></div><% } %>
 
 <% if (requests.length === 0) { %>
   <div class="alert alert-light border">
@@ -27,6 +28,40 @@
           <p class="small mb-0">Creator contact: <a href="mailto:<%= r.contact_email %>"><%= r.contact_email %></a></p>
         <% } else if (r.status === 'pending') { %>
           <p class="small text-muted mb-0">Waiting for the creator to reply.</p>
+        <% } %>
+                <% if (r.status === 'completed') { %>
+          <% if (r.review_id) { %>
+            <div class="border-top pt-2 mt-2">
+              <p class="small mb-0">
+                <strong>Your review:</strong>
+                <span class="star"><%= '★'.repeat(r.review_rating) %></span>
+                <%= r.review_comment || '' %>
+              </p>
+            </div>
+          <% } else { %>
+            <form action="/reviews" method="POST" class="border-top pt-3 mt-2">
+              <input type="hidden" name="commissionId" value="<%= r.id %>">
+              <h3 class="h6">Leave a review</h3>
+              <div class="row g-2">
+                <div class="col-md-3">
+                  <label for="rating-<%= r.id %>" class="form-label small">Rating</label>
+                  <select class="form-select" id="rating-<%= r.id %>" name="rating" required>
+                    <option value="">Choose…</option>
+                    <option value="5">5 – Excellent</option>
+                    <option value="4">4 – Good</option>
+                    <option value="3">3 – Okay</option>
+                    <option value="2">2 – Poor</option>
+                    <option value="1">1 – Bad</option>
+                  </select>
+                </div>
+                <div class="col-md-9">
+                  <label for="comment-<%= r.id %>" class="form-label small">Comment (optional)</label>
+                  <textarea class="form-control" id="comment-<%= r.id %>" name="comment" rows="2" maxlength="1000"></textarea>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm mt-2">Submit review</button>
+            </form>
+          <% } %>
         <% } %>
       </div>
     </div>

@@ -27,17 +27,18 @@ async function hasPending(clientId, creatorId) {
   return rows.length > 0;
 }
 
-// A client's own requests. The creator's email is only returned once accepted.
 async function findByClient(clientId) {
   const [rows] = await pool.query(
     `SELECT cr.id, cr.title, cr.description, cr.budget, cr.status,
             DATE_FORMAT(cr.deadline, '%Y-%m-%d')   AS deadline,
             DATE_FORMAT(cr.created_at, '%Y-%m-%d') AS created_date,
             cp.id AS creator_profile_id, cu.name AS creator_name,
-            CASE WHEN cr.status IN ('accepted', 'completed') THEN cu.email END AS contact_email
+            CASE WHEN cr.status IN ('accepted', 'completed') THEN cu.email END AS contact_email,
+            rv.id AS review_id, rv.rating AS review_rating, rv.comment AS review_comment
      FROM commission_requests cr
      JOIN creator_profiles cp ON cp.id = cr.creator_id
      JOIN users cu            ON cu.id = cp.user_id
+     LEFT JOIN reviews rv     ON rv.commission_id = cr.id
      WHERE cr.client_id = ?
      ORDER BY cr.created_at DESC`,
     [clientId]

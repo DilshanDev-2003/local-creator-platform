@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/creatorDashboardController');
+const commissionController = require('../controllers/commissionController');
 const { requireRole } = require('../middleware/auth');
 const { uploadImage } = require('../middleware/upload');
 const { profileRules, portfolioRules } = require('../middleware/validators');
-const commissionController = require('../controllers/commissionController');
 
-// Every route below needs a logged-in creator
 router.use(requireRole('creator'));
 
 router.get('/dashboard', controller.showDashboard);

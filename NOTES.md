@@ -58,6 +58,13 @@ Decision log. Each entry explains WHY a choice was made (useful for the viva).
 - **Visitors and creators can be clients; admins cannot.**
 - **Same response for "not yours" and "not allowed" status changes**: no information leak.
 - **Budget stored as DECIMAL, shown as LKR**; dates formatted in SQL to avoid time-zone shifts.
+- **Review insert is one "INSERT ... SELECT ... WHERE" statement**: the client owns the
+  commission and it is completed; checks and insert cannot be separated by a race.
+- **UNIQUE(commission_id) is the final guard against double reviews** (ER_DUP_ENTRY handled).
+- **Same redirect for "not yours / not completed / not found"**: no information leak.
+- **Ratings are never stored on the creator; AVG() over visible reviews**: always consistent,
+  and hiding a review (admin) immediately updates the average.
+- **Messages from a fixed dictionary keyed by ?status=**: no text injection through the URL.
 
 ## Scope
 
@@ -73,6 +80,6 @@ Decision log. Each entry explains WHY a choice was made (useful for the viva).
 - [x] Tests (Jest + Supertest) and CI (GitHub Actions)
 - [x] Creator dashboard + portfolio upload (with tests)
 - [x] Commission requests (client + creator flow, with tests)
-- [ ] Reviews
+- [x] Reviews (with tests)
 - [ ] Admin dashboard
 - [ ] Final testing + viva preparation
