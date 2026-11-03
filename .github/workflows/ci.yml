@@ -23,4 +23,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
+        env:
+          PORT: ${{ vars.PORT }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
         run: npm test
