@@ -40,7 +40,11 @@ function hasValidSignature(filePath) {
 // Deletes a stored file. path.basename stops "../" tricks.
 function removeFile(filename) {
   if (!filename) return;
-  fs.unlink(path.join(UPLOAD_DIR, path.basename(filename)), () => {});
+  try {
+    fs.unlinkSync(path.join(UPLOAD_DIR, path.basename(filename)));
+  } catch (err) {
+    // already gone: nothing to do
+  }  
 }
 
 // Wraps multer so upload problems become a friendly message (req.uploadError)

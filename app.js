@@ -5,6 +5,7 @@ const session = require('express-session');
 const pool = require('./config/db');
 
 const app = express();
+app.set('trust proxy', 1); // Render terminates HTTPS at a proxy
 
 // View engine: EJS renders HTML pages on the server
 app.set('view engine', 'ejs');
@@ -18,7 +19,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { httpOnly: true, sameSite: 'lax', maxAge: 1000 * 60 * 60 * 2 }, // 2 hours
+    cookie: { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 1000 * 60 * 60 * 2 }, // 2 hours
   })
 );
 
