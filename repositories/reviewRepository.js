@@ -47,4 +47,31 @@ async function create({ commissionId, clientId, rating, comment }) {
   return result.affectedRows > 0;
 }
 
-module.exports = { findLatestVisible, findByCreator, create };
+// ALL reviews (visible or hidden) for moderation
+async function listForAdmin(limit) {
+  const [rows] = await pool.query(
+    `SELECT r.id, r.rating, r.comment, r.is_visible,
+            DATE_FORMAT(r.created_at, '%Y-%m-%d') AS created_date,
+            client.name AS client_name,
+            creator_user.name AS creator_name
+     FROM reviews r
+     JOIN commission_requests cr ON cr.id = r.commission_id
+     JOIN users client           ON client.id = cr.client_id
+     JOIN creator_profiles cp    ON cp.id = cr.creator_id
+     JOIN users creator_user     ON creator_user.id = cp.user_id
+     ORDER BY r.created_at DESC
+     LIMIT ?`,
+    [limit]
+  );
+  return rows;
+}
+
+async function setVisible(id, visible) {
+  const [result] = await pool.query(
+    'UPDATE reviews SET is_visible = ? WHERE id = ?',
+    [visible ? 1 : 0, id]
+  );
+  return result.affectedRows > 0;
+}
+
+module.exports = { findLatestVisible, findByCreator, create, listForAdmin, setVisible };

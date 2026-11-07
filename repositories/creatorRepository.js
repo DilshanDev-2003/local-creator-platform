@@ -83,4 +83,27 @@ async function updateProfile(userId, { bio, location, avatarPath }) {
   );
 }
 
-module.exports = { search, findTopRated, findById, findByUserId, updateProfile };
+// Every creator (pending first) for the admin table
+async function listForAdmin(limit) {
+  const [rows] = await pool.query(
+    `SELECT cp.id, u.name, u.email, c.name AS category_name, cp.location, cp.is_approved,
+            DATE_FORMAT(cp.created_at, '%Y-%m-%d') AS created_date
+     FROM creator_profiles cp
+     JOIN users u      ON u.id = cp.user_id
+     JOIN categories c ON c.id = cp.category_id
+     ORDER BY cp.is_approved ASC, cp.created_at DESC
+     LIMIT ?`,
+    [limit]
+  );
+  return rows;
+}
+
+async function setApproved(id, approved) {
+  const [result] = await pool.query(
+    'UPDATE creator_profiles SET is_approved = ? WHERE id = ?',
+    [approved ? 1 : 0, id]
+  );
+  return result.affectedRows > 0;
+}
+
+module.exports = { search, findTopRated, findById, findByUserId, updateProfile, listForAdmin, setApproved, };

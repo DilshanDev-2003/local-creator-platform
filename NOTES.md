@@ -65,6 +65,14 @@ Decision log. Each entry explains WHY a choice was made (useful for the viva).
 - **Ratings are never stored on the creator; AVG() over visible reviews**: always consistent,
   and hiding a review (admin) immediately updates the average.
 - **Messages from a fixed dictionary keyed by ?status=**: no text injection through the URL.
+- **Admin routes protected by router.use(requireRole('admin'))**: one line covers all.
+- **Blocked users are logged out on their next request**: middleware re-reads the account
+  from the database on every request (also makes role changes immediate).
+- **Admin accounts cannot be blocked (role <> 'admin' inside the SQL)**: no lock-outs.
+- **Reviews are hidden, never deleted**: reversible; average ratings use visible reviews only.
+- **Creator approval is reversible (revoke)**: removes the profile from public pages.
+- **Admin handlers share one action() helper**: id validation and error handling written once.
+- **Status messages from a fixed dictionary**: nothing from the URL is echoed.
 
 ## Scope
 
@@ -81,5 +89,6 @@ Decision log. Each entry explains WHY a choice was made (useful for the viva).
 - [x] Creator dashboard + portfolio upload (with tests)
 - [x] Commission requests (client + creator flow, with tests)
 - [x] Reviews (with tests)
-- [ ] Admin dashboard
-- [ ] Final testing + viva preparation
+- [x] Admin panel (with tests)
+- [ ] Demo data, polish, accessibility check
+- [ ] Final README + viva preparation

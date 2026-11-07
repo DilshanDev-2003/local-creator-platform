@@ -27,6 +27,9 @@
           <% if (currentUser && currentUser.role !== 'admin') { %>
             <li class="nav-item"><a class="nav-link" href="/my-commissions">My Commissions</a></li>
           <% } %>
+          <% if (currentUser && currentUser.role === 'admin') { %>
+            <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+          <% } %>
         </ul>
         <div class="d-flex align-items-center gap-2">
           <% if (currentUser) { %>

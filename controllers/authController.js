@@ -91,7 +91,8 @@ async function login(req, res) {
     req.session.regenerate((err) => {
       if (err) throw err;
       req.session.user = { id: user.id, name: user.name, role: user.role };
-      req.session.save(() => res.redirect(user.role === 'creator' ? '/creator/dashboard' : '/'));
+      const HOME = { creator: '/creator/dashboard', admin: '/admin' };
+      req.session.save(() => res.redirect(HOME[user.role] || '/'));
     });
   } catch (err) {
     console.error(err);

@@ -1,0 +1,139 @@
+<%- include('partials/header', { title: title }) %>
+
+<h1 class="h3 mb-3">Admin panel</h1>
+
+<% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+<% if (warning) { %><div class="alert alert-warning"><%= warning %></div><% } %>
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+  <% [['Users', stats.users], ['Approved creators', stats.creators], ['Pending creators', stats.pending_creators],
+      ['Commissions', stats.commissions], ['Reviews', stats.reviews]].forEach(function(s) { %>
+    <div class="col-6 col-md">
+      <div class="card shadow-sm text-center h-100">
+        <div class="card-body py-3">
+          <div class="h3 mb-0 text-primary"><%= s[1] %></div>
+          <div class="small text-muted"><%= s[0] %></div>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<!-- Creators -->
+<section class="mb-5">
+  <h2 class="h5">Creators</h2>
+  <% if (creators.length === 0) { %>
+    <div class="alert alert-light border">No creators have registered yet.</div>
+  <% } else { %>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle bg-white border">
+        <thead><tr><th>Name</th><th>Category</th><th>Location</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+        <tbody>
+          <% creators.forEach(function(c) { %>
+            <tr>
+              <td><%= c.name %><div class="small text-muted"><%= c.email %></div></td>
+              <td><%= c.category_name %></td>
+              <td><%= c.location || '-' %></td>
+              <td>
+                <% if (c.is_approved) { %><span class="badge text-bg-success">Approved</span>
+                <% } else { %><span class="badge text-bg-warning">Pending</span><% } %>
+              </td>
+              <td><%= c.created_date %></td>
+              <td class="text-end">
+                <% if (!c.is_approved) { %>
+                  <form action="/admin/creators/<%= c.id %>/approve" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                  </form>
+                <% } else { %>
+                  <form action="/admin/creators/<%= c.id %>/revoke" method="POST" class="d-inline"
+                        onsubmit="return confirm('Remove approval? The profile will no longer be public.');">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Revoke</button>
+                  </form>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+
+<!-- Users -->
+<section class="mb-5">
+  <h2 class="h5">Users</h2>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle bg-white border">
+      <thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+      <tbody>
+        <% users.forEach(function(u) { %>
+          <tr>
+            <td><%= u.name %><div class="small text-muted"><%= u.email %></div></td>
+            <td><%= u.role %></td>
+            <td>
+              <% if (u.is_active) { %><span class="badge text-bg-success">Active</span>
+              <% } else { %><span class="badge text-bg-secondary">Blocked</span><% } %>
+            </td>
+            <td><%= u.created_date %></td>
+            <td class="text-end">
+              <% if (u.role === 'admin') { %>
+                <span class="text-muted small">-</span>
+              <% } else if (u.is_active) { %>
+                <form action="/admin/users/<%= u.id %>/block" method="POST" class="d-inline"
+                      onsubmit="return confirm('Block this user?');">
+                  <button type="submit" class="btn btn-outline-danger btn-sm">Block</button>
+                </form>
+              <% } else { %>
+                <form action="/admin/users/<%= u.id %>/unblock" method="POST" class="d-inline">
+                  <button type="submit" class="btn btn-outline-primary btn-sm">Unblock</button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section class="mb-4">
+  <h2 class="h5">Reviews</h2>
+  <% if (reviews.length === 0) { %>
+    <div class="alert alert-light border">No reviews yet.</div>
+  <% } else { %>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle bg-white border">
+        <thead><tr><th>Rating</th><th>Comment</th><th>From → To</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <% reviews.forEach(function(r) { %>
+            <tr>
+              <td class="star text-nowrap"><%= '★'.repeat(r.rating) %></td>
+              <td><%= r.comment || '(no comment)' %></td>
+              <td class="small"><%= r.client_name %> → <%= r.creator_name %><div class="text-muted"><%= r.created_date %></div></td>
+              <td>
+                <% if (r.is_visible) { %><span class="badge text-bg-success">Visible</span>
+                <% } else { %><span class="badge text-bg-secondary">Hidden</span><% } %>
+              </td>
+              <td class="text-end">
+                <% if (r.is_visible) { %>
+                  <form action="/admin/reviews/<%= r.id %>/hide" method="POST" class="d-inline"
+                        onsubmit="return confirm('Hide this review?');">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Hide</button>
+                  </form>
+                <% } else { %>
+                  <form action="/admin/reviews/<%= r.id %>/show" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-outline-primary btn-sm">Show</button>
+                  </form>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

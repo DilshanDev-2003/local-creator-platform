@@ -19,9 +19,9 @@ const good = { commissionId: '12', rating: '5', comment: 'Wonderful work!' };
 
 async function loginAs(role, id = 7) {
   const agent = request.agent(app);
-  userRepository.findByEmail.mockResolvedValue({
-    id, name: 'Tester', role, is_active: 1, password_hash: hash,
-  });
+  const user = { id, name: 'Tester', role, is_active: 1, password_hash: hash };
+  userRepository.findByEmail.mockResolvedValue(user);
+  userRepository.findById.mockResolvedValue(user);
   await agent.post('/login').type('form').send({ email: 't@example.com', password: 'Correct123' });
   return agent;
 }

@@ -30,9 +30,9 @@ const profile = {
 
 async function loginAs(role) {
   const agent = request.agent(app);
-  userRepository.findByEmail.mockResolvedValue({
-    id: 7, name: 'Kasun', role, is_active: 1, password_hash: hash,
-  });
+  const user = { id: 7, name: 'Kasun', role, is_active: 1, password_hash: hash };
+  userRepository.findByEmail.mockResolvedValue(user);
+  userRepository.findById.mockResolvedValue(user);
   await agent.post('/login').type('form').send({ email: 'k@example.com', password: 'Correct123' });
   return agent;
 }

@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const pool = require('./config/db');
+const { refreshSessionUser } = require('./middleware/sessionUser');
 
 const app = express();
 app.set('trust proxy', 1); // Render terminates HTTPS at a proxy
@@ -22,6 +23,7 @@ app.use(
     cookie: { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 1000 * 60 * 60 * 2 }, // 2 hours
   })
 );
+app.use(refreshSessionUser);
 
 // Make the logged-in user available in every EJS view
 app.use((req, res, next) => {
@@ -33,6 +35,7 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/public'));
 app.use('/creator', require('./routes/creator'));
+app.use('/admin', require('./routes/admin'));
 app.use('/', require('./routes/commissions'));
 
 // Any URL not matched above lands here (must stay AFTER all routes)
