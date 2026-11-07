@@ -7,6 +7,7 @@ node_modules/
 # User uploaded images (keep the folder, ignore the files)
 public/uploads/*
 !public/uploads/.gitkeep
+!public/uploads/demo-*.svg
 
 # OS / editor files
 .DS_Store
