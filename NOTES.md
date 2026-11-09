@@ -79,6 +79,11 @@ Decision log. Each entry explains WHY a choice was made (useful for the viva).
 - **Global error handler + friendly 500 page**: no stack traces shown to users.
 - **Demo data seed (idempotent, --reset)**: all demo rows use @demo.test, so cleanup never
   touches real accounts.
+- **Uploaded images are stored in MySQL (uploaded_files, MEDIUMBLOB) and served by
+  GET /uploads/:filename**: free hosts have a temporary disk, so files on disk disappear on
+  every restart. The database is permanent and free, and views did not need to change.
+  Trade-off: not ideal for large scale (cloud storage such as Cloudinary or S3 would be better).
+- **File type is detected from the real bytes; names are random hex; nosniff header**.  
 
 ## Scope
 

@@ -73,3 +73,10 @@ INSERT INTO categories (name, slug) VALUES
   ('Photographers',   'photographers'),
   ('Craftspeople',    'craftspeople'),
   ('Digital Artists', 'digital-artists');
+
+CREATE TABLE IF NOT EXISTS uploaded_files (
+  filename   VARCHAR(64) PRIMARY KEY,
+  mime_type  VARCHAR(50) NOT NULL,
+  data       MEDIUMBLOB NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;  

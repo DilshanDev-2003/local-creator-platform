@@ -15,6 +15,9 @@ app.set('views', path.join(__dirname, 'views'));
 // Middleware
 app.use(express.urlencoded({ extended: false })); // read HTML form data
 app.use(express.static(path.join(__dirname, 'public'))); // serve css/js/images
+// Images stored in the database. express.static runs first (demo files on disk),
+// then this route. It sits before the session so image requests stay cheap.
+app.get('/uploads/:filename', require('./controllers/fileController').serve);
 app.use(
   session({
     secret: process.env.SESSION_SECRET,

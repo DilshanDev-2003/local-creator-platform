@@ -65,14 +65,14 @@ async function showDashboard(req, res) {
 async function updateProfile(req, res) {
   const errors = collectErrors(req);
   if (errors.length) {
-    if (req.file) removeFile(req.file.filename); // do not keep files from failed requests
+    if (req.file) await removeFile(req.file.filename); // do not keep files from failed requests
     return renderDashboard(req, res, { errors, status: 400 }).catch(() => res.status(500).send('Error'));
   }
 
   try {
     const profile = await creatorRepository.findByUserId(req.session.user.id);
     if (!profile) {
-      if (req.file) removeFile(req.file.filename);
+      if (req.file) await removeFile(req.file.filename);
       return res.status(403).send('403 - No creator profile found for this account.');
     }
 
@@ -83,10 +83,10 @@ async function updateProfile(req, res) {
     });
 
     // Replace the old avatar file only after the database update succeeded
-    if (req.file && profile.avatar_path) removeFile(profile.avatar_path);
+    if (req.file && profile.avatar_path) await removeFile(profile.avatar_path);
     res.redirect('/creator/dashboard?status=profile');
   } catch (err) {
-    if (req.file) removeFile(req.file.filename);
+    if (req.file) await removeFile(req.file.filename);
     console.error(err);
     res.status(500).send('Something went wrong saving your profile.');
   }
@@ -99,7 +99,7 @@ async function addWork(req, res) {
   try {
     const profile = await creatorRepository.findByUserId(req.session.user.id);
     if (!profile) {
-      if (req.file) removeFile(req.file.filename);
+      if (req.file) await removeFile(req.file.filename);
       return res.status(403).send('403 - No creator profile found for this account.');
     }
 
@@ -108,7 +108,7 @@ async function addWork(req, res) {
     }
 
     if (errors.length) {
-      if (req.file) removeFile(req.file.filename);
+      if (req.file) await removeFile(req.file.filename);
       return await renderDashboard(req, res, { errors, status: 400 });
     }
 
@@ -121,7 +121,7 @@ async function addWork(req, res) {
     });
     res.redirect('/creator/dashboard?status=added');
   } catch (err) {
-    if (req.file) removeFile(req.file.filename);
+    if (req.file) await removeFile(req.file.filename);
     console.error(err);
     res.status(500).send('Something went wrong adding your work.');
   }
@@ -143,7 +143,7 @@ async function deleteWork(req, res) {
     const imagePath = await portfolioRepository.deleteOwned(id, profile.id);
     if (!imagePath) return res.status(404).render('404', { title: 'Page not found' });
 
-    removeFile(imagePath);
+    await removeFile(imagePath);
     res.redirect('/creator/dashboard?status=deleted');
   } catch (err) {
     console.error(err);
