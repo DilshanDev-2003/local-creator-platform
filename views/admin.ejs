@@ -109,7 +109,7 @@
         <tbody>
           <% reviews.forEach(function(r) { %>
             <tr>
-              <td class="star text-nowrap"><%= '★'.repeat(r.rating) %></td>
+              <td class="text-nowrap"><%- include('partials/stars', { n: r.rating }) %></td>
               <td><%= r.comment || '(no comment)' %></td>
               <td class="small"><%= r.client_name %> → <%= r.creator_name %><div class="text-muted"><%= r.created_date %></div></td>
               <td>

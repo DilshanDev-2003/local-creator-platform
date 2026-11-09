@@ -34,7 +34,7 @@
             <div class="border-top pt-2 mt-2">
               <p class="small mb-0">
                 <strong>Your review:</strong>
-                <span class="star"><%= '★'.repeat(r.review_rating) %></span>
+                <%- include('partials/stars', { n: r.review_rating }) %>
                 <%= r.review_comment || '' %>
               </p>
             </div>

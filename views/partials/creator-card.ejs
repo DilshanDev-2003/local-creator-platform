@@ -12,7 +12,7 @@
     <% if (cr.location) { %><p class="text-muted small mb-1"><%= cr.location %></p><% } %>
     <p class="mb-2">
       <% if (cr.review_count > 0) { %>
-        <span class="star"><%= '★'.repeat(Math.round(cr.avg_rating)) %></span>
+        <%- include('stars', { n: Math.round(cr.avg_rating), label: cr.avg_rating + ' out of 5 stars' }) %>
         <small class="text-muted"><%= cr.avg_rating %> (<%= cr.review_count %>)</small>
       <% } else { %>
         <small class="text-muted">No reviews yet</small>

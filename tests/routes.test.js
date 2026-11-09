@@ -71,6 +71,23 @@ describe('public pages', () => {
     expect(res.status).toBe(404);
     expect(res.text).toContain('404');
   });
+
+  test('pages have a skip link and the star rating is readable by screen readers', async () => {
+    creatorRepository.search.mockResolvedValue([
+      { id: 1, name: 'Kasun', location: '', avatar_path: null, category_name: 'Painters',
+        avg_rating: '4.5', review_count: 2 },
+    ]);
+    const res = await request(app).get('/creators');
+    expect(res.text).toContain('Skip to main content');
+    expect(res.text).toContain('aria-label="4.5 out of 5 stars"');
+  });
+
+  test('an unexpected error shows the friendly error page, not a stack trace', async () => {
+    creatorRepository.search.mockImplementation(() => { throw new Error('boom'); });
+    const res = await request(app).get('/creators');
+    expect(res.status).toBe(500);
+    expect(res.text).not.toContain('boom');
+  });
 });
 
 describe('registration', () => {

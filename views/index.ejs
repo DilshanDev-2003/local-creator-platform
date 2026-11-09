@@ -126,7 +126,7 @@
         <div class="col-md-4">
           <div class="card h-100 shadow-sm">
             <div class="card-body">
-              <p class="star mb-1"><%= '★'.repeat(r.rating) %></p>
+              <p class="mb-1"><%- include('partials/stars', { n: r.rating }) %></p>
               <p class="mb-2"><%= r.comment || '(No written comment)' %></p>
               <p class="text-muted small mb-0">— <%= r.client_name %>, on work by <%= r.creator_name %></p>
             </div>

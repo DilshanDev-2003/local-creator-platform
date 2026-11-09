@@ -14,7 +14,7 @@
       <% if (creator.location) { %><span class="text-muted small ms-2"><%= creator.location %></span><% } %>
       <p class="mb-1 mt-1">
         <% if (creator.review_count > 0) { %>
-          <span class="star"><%= '★'.repeat(Math.round(creator.avg_rating)) %></span>
+          <%- include('partials/stars', { n: Math.round(creator.avg_rating), label: creator.avg_rating + ' out of 5 stars' }) %>
           <small class="text-muted"><%= creator.avg_rating %> (<%= creator.review_count %> reviews)</small>
         <% } else { %>
           <small class="text-muted">No reviews yet</small>
@@ -57,7 +57,7 @@
     <% reviews.forEach(function(r) { %>
       <div class="card mb-2">
         <div class="card-body">
-          <span class="star"><%= '★'.repeat(r.rating) %></span>
+          <%- include('partials/stars', { n: r.rating }) %>
           <p class="mb-1"><%= r.comment || '(No written comment)' %></p>
           <small class="text-muted">— <%= r.client_name %></small>
         </div>

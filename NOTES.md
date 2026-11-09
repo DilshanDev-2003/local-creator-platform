@@ -73,6 +73,12 @@ Decision log. Each entry explains WHY a choice was made (useful for the viva).
 - **Creator approval is reversible (revoke)**: removes the profile from public pages.
 - **Admin handlers share one action() helper**: id validation and error handling written once.
 - **Status messages from a fixed dictionary**: nothing from the URL is echoed.
+- **Accessibility**: skip link, aria-current on the active menu item, labelled forms with
+  autocomplete, alt text on images, star ratings with text alternatives (role=img + aria-label),
+  darker gold for contrast, semantic landmarks (nav, main).
+- **Global error handler + friendly 500 page**: no stack traces shown to users.
+- **Demo data seed (idempotent, --reset)**: all demo rows use @demo.test, so cleanup never
+  touches real accounts.
 
 ## Scope
 
@@ -81,14 +87,19 @@ Decision log. Each entry explains WHY a choice was made (useful for the viva).
 
 ## Progress Log
 
-- [x] Project setup, schema, server skeleton
-- [x] Register / Login
-- [x] Navbar + Homepage + Categories page
-- [x] Creator directory, profile page, category pages
-- [x] Tests (Jest + Supertest) and CI (GitHub Actions)
-- [x] Creator dashboard + portfolio upload (with tests)
-- [x] Commission requests (client + creator flow, with tests)
-- [x] Reviews (with tests)
-- [x] Admin panel (with tests)
-- [ ] Demo data, polish, accessibility check
-- [ ] Final README + viva preparation
+- [x] Setup, schema, auth
+- [x] Homepage, categories, creator directory and profiles
+- [x] Creator dashboard and portfolio upload
+- [x] Commission requests, reviews
+- [x] Admin panel
+- [x] Tests and CI (GitHub Actions)
+- [x] Deployment (Render + Aiven)
+- [x] Demo data, accessibility pass, final documentation
+- [ ] Viva rehearsal
+
+## Known limitations and future work
+
+- Add CSRF tokens; add rate limiting on login.
+- Move images to cloud storage (Cloudinary or S3).
+- Use a database-backed session store.
+- Pagination, email notifications, payments.

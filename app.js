@@ -25,9 +25,9 @@ app.use(
 );
 app.use(refreshSessionUser);
 
-// Make the logged-in user available in every EJS view
 app.use((req, res, next) => {
   res.locals.currentUser = req.session.user || null;
+  res.locals.currentPath = req.path;
   next();
 });
 
@@ -50,6 +50,13 @@ app.get('/health', async (req, res) => {
   } catch (err) {
     res.status(500).json({ status: 'database error', message: err.message });
   }
+});
+
+// Any unexpected error lands here, with a friendly page instead of a stack trace
+app.use((err, req, res, next) => {
+  console.error(err);
+  if (res.headersSent) return next(err);
+  res.status(500).render('500', { title: 'Something went wrong' });
 });
 
 module.exports = app;
